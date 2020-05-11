@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.business.mapper.BillDemoMapper">
+    
+    <resultMap type="BillDemo" id="BillDemoResult">
+        <result property="billId"    column="bill_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="billName"    column="bill_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="productTime"    column="product_time"    />
+        <result property="spendMoney"    column="spend_money"    />
+    </resultMap>
+
+    <sql id="selectBillDemoVo">
+        select bill_id, user_name, bill_name, create_time, product_time, spend_money from bill_demo
+    </sql>
+
+    <select id="selectBillDemoList" parameterType="BillDemo" resultMap="BillDemoResult">
+        <include refid="selectBillDemoVo"/>
+        <where>  
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="billName != null  and billName != ''"> and bill_name like concat('%', #{billName}, '%')</if>
+            <if test="productTime != null "> and product_time = #{productTime}</if>
+            <if test="spendMoney != null "> and spend_money = #{spendMoney}</if>
+        </where>
+    </select>
+    
+    <select id="selectBillDemoById" parameterType="Long" resultMap="BillDemoResult">
+        <include refid="selectBillDemoVo"/>
+        where bill_id = #{billId}
+    </select>
+        
+    <insert id="insertBillDemo" parameterType="BillDemo">
+        insert into bill_demo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billId != null ">bill_id,</if>
+            <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="billName != null  and billName != ''">bill_name,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="productTime != null ">product_time,</if>
+            <if test="spendMoney != null ">spend_money,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billId != null ">#{billId},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="billName != null  and billName != ''">#{billName},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="productTime != null ">#{productTime},</if>
+            <if test="spendMoney != null ">#{spendMoney},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBillDemo" parameterType="BillDemo">
+        update bill_demo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="billName != null  and billName != ''">bill_name = #{billName},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="productTime != null ">product_time = #{productTime},</if>
+            <if test="spendMoney != null ">spend_money = #{spendMoney},</if>
+        </trim>
+        where bill_id = #{billId}
+    </update>
+
+    <delete id="deleteBillDemoById" parameterType="Long">
+        delete from bill_demo where bill_id = #{billId}
+    </delete>
+
+    <delete id="deleteBillDemoByIds" parameterType="String">
+        delete from bill_demo where bill_id in 
+        <foreach item="billId" collection="array" open="(" separator="," close=")">
+            #{billId}
+        </foreach>
+    </delete>
+    
+</mapper>
